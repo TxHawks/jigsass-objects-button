@@ -1,0 +1,578 @@
+<!doctype html>
+<title>jigsass-objects-button</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="style.css?05" rel="stylesheet">
+<link href="jigsass-logo.png" rel="shortcut icon">
+<script type="text/javascript">WebFontConfig={google:{families:["Roboto:400,100,300,500:latin"]}},function(){var e=document.createElement("script");e.src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js",e.type="text/javascript",e.async="true";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}();</script>
+<script>examples={"base":"","target":"_self","css":["assets/sg.css"],"js":[],"bodyjs":[],"htmlcss":"background:none;border:0;clip:auto;display:block;height:auto;margin:0;padding:0;position:static;width:auto","bodycss":"background:none;border:0;clip:auto;display:block;height:auto;margin:0;padding:0;position:static;width:auto"};</script>
+
+<header>
+	<nav>
+		<img src="jigsass-logo.png" alt="jigsass-objects-button">
+		
+	<ul>
+		
+				<li>
+					<a href="#buttons"><span>Buttons</span></a>
+					
+	<ul>
+		
+				<li>
+					<a href="#introduction"><span>Introduction</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#configuration"><span>Configuration</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-mixin"><span>Button Mixin</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-base"><span>Button (base)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-small"><span>Button (small)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-large"><span>Button (large)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-outlined"><span>Button (outlined)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-rounded"><span>Button (rounded)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-primary"><span>Button (primary)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-facebook"><span>Button (facebook)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-twitter"><span>Button (twitter)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#button-action"><span>Button (action)</span></a>
+					
+				</li>
+				
+				<li>
+					<a href="#disabled-button"><span>Disabled Button</span></a>
+					
+				</li>
+				
+	</ul>
+	
+				</li>
+				
+	</ul>
+	
+	</nav>
+</header>
+
+<main>
+	
+		<section id="buttons">
+			<h2>Buttons</h2>
+			<div>
+				
+				
+		<section id="introduction">
+			<h3>Introduction</h3>
+			<div>
+				<p>Unopinionated and configurable button objects</p>
+<p>The JigSass Button object is built for maximal flexibility, providing only very basic styles
+as default. JigSass Button objects are transparent by default, and are meant to be extended by
+type-size, color and background-color utils, and by configurable button object modifiers.</p>
+<h4 id="installation">Installation</h4>
+<p>Using npm:</p>
+<pre><code class="lang-sh">npm i -S jigsass-objects-button
+</code></pre>
+<h4 id="usage">Usage</h4>
+<p>First, you need to import JigSass Button:</p>
+<pre><code class="lang-scss">@import &#39;path/to/jigsass-objects-button/scss/index&#39;;
+</code></pre>
+<p>And optionally <a href="#configuration">reconfigure</a> the defaults to your liking.</p>
+<p>Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
+In order to use its classes, you would have to first explicitly indicate your intention to use
+them, using the <a href="#button-mixin">jigsass-button</a> mixin, Leaving us with small and maintainable css:</p>
+<pre><code class="lang-scss">@include jigsass-button([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
+</code></pre>
+<p>All JigSass Button classes are responsive-enabled, using
+<a href="https://txhawks.github.io/jigsass-tools-mq/">JigSass MQ</a> and the breakpoints defined in the
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>
+variable.</p>
+<p>Based on the arguments passed to the jigsass-button mixin, responsive modifiers are
+generated according to the following logic:</p>
+<pre><code class="lang-scss">.o-button[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+</code></pre>
+<p>So, assuming the <code>medium</code>, <code>large</code> and <code>landscape</code> breakpoints are defined in <code>$jigsass-breakpoints</code>
+as <code>600px</code>, <code>1024px</code> and <code>(orientation: landscape)</code> respectively,</p>
+<pre><code class="lang-scss">@include jigsass-button($modifier: outline);
+</code></pre>
+<p>will generate the <code>.o-btn--outline</code> class, which is not limited to any media-query.</p>
+<pre><code class="lang-scss">@include jigsass-button( $modifier: outline, $until: medium);
+</code></pre>
+<p>will generate the <code>.o-btn--outline--until-medium</code> class, which will be in effect at
+<code>(max-width: 37.49em)</code> and will override styles in the default class until that point.</p>
+<pre><code class="lang-scss">@include jigsass-button($modifier: facebook, $from: large, $misc: landscape);
+</code></pre>
+<p>will generate the <code>.o-btn--facebook--from-large-when-landscape</code> class, which will go into
+effect at <code>(min-width: 64em) and (orientation: landscape)</code> and will override styles in the default
+class under these  conditions.</p>
+<p>Regardless of how many times a class is included, or where, it will only be generated once,
+where the <code>jigsass-objects-button</code> partial was imported, leaving us with a css file as small
+as possible, and a predictable cascade.</p>
+<p><strong>License:</strong> MIT</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="configuration">
+			<h3>Configuration</h3>
+			<div>
+				<p>JigSass Button allows for some modification through configuration variables.
+Redefine them to your liking <em>before</em> importing JigSass Buttons.</p>
+<h4 id="button-padding">Button Padding</h4>
+<pre><code class="lang-scss">$jigsass-btn-padding
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>A map of button padding modifiers, each key should contain a list of two
+unitless numbers, representing the number of rhythm units used as padding
+on the horizontal and vertical axes, respectively.</p>
+<p><strong>Default:</strong> <code>(default: 2 1)</code></p>
+<p><strong>Properties:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>default</td>
+<td>Sets the padding of default button object</td>
+<td>List</td>
+<td>2 1</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-btn-padding: (
+  default: 2 1,
+  small: 1 0.5,
+  large: 3 3,
+);
+</code></pre>
+<h4 id="button-outline">Button Outline</h4>
+<pre><code class="lang-scss">$jigsass-btn-outline
+</code></pre>
+<p><strong>Type:</strong> <code>List</code></p>
+<p>The border width and style (and optionally color) of outlined buttons (<code>.o-btn--outline</code>)</p>
+<p><strong>Default:</strong> <code>1px solid</code></p>
+<h4 id="button-style">Button Style</h4>
+<pre><code class="lang-scss">$jigsass-btn-style
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Style declarations to add to the <code>.o-btn</code> class.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-btn-style: (
+  transition: all 0.25s ease-out,
+);
+</code></pre>
+<h4 id="button-modifiers">Button Modifiers</h4>
+<pre><code class="lang-scss">$jigsass-btn-modifiers
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>CSS declarations for button modifiers, with each modifier being a nested
+map at the first level.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-btn-modifiers: (
+  primary: (
+    background-color: #09a5d9,
+    color: #fff,
+
+    &#39;&amp;:hover, &amp;:focus, &amp;:active&#39;: (
+      background-color: darken(#09a5d9, 5%),
+    )
+  ),
+  facebook: (
+    background-color: #3b5998,
+    color: #fff,
+
+    &#39;&amp;:hover, &amp;:focus, &amp;:active&#39;: (
+      background-color: darken(#3b5998, 5%),
+    )
+  ),
+  twitter: (
+    background-color: #55acee,
+    color: #fff,
+
+    &#39;&amp;:hover, &amp;:focus, &amp;:active&#39;: (
+      background-color: darken(#55acee, 5%),
+    )
+  ),
+  gplus: (
+    background-color: #dc4e41,
+    color: #fff,
+
+    &#39;&amp;:hover, &amp;:focus, &amp;:active&#39;: (
+      background-color: darken(#dc4e41, 5%),
+    )
+  ),
+);
+
+
+#### Disabled Buttons
+```scss
+$jigsass-btn-disabled
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Style declarations for the <code>.o-btn-is-disabled</code> class.</p>
+<p><strong>Default:</strong> `</p>
+<pre><code class="lang-scss">(
+  opacity: 0.4,
+  cursor: default,
+)
+</code></pre>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-mixin">
+			<h3>Button Mixin</h3>
+			<div>
+				<pre><code class="lang-scss">@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) { ... }
+</code></pre>
+<h4 id="description">Description</h4>
+<p>Generates an <code>o-btn</code> or a button modifier class, optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$modifier</code></td>
+<td>A <code>o-btn</code> modifier.</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$from</code></td>
+<td>The name of breakpoint used as the min-width condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$until</code></td>
+<td>The name of breakpoint used as the max-width condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>$misc</code></td>
+<td>The name of a miscellaneous media query condition</td>
+<td><code>String</code> or <code>Boolean</code></td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example">Example</h4>
+<pre><code class="lang-scss">@include jigsass-button($from: medium);
+</code></pre>
+<p>Will generate:</p>
+<pre><code class="lang-scss">@media (min-width: 37.5em) {
+  .o-btn--from-medium { ... }
+}
+</code></pre>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-base">
+			<h3>Button (base)</h3>
+			<div>
+				<p><strong>.o-btn</strong></p>
+<p>An actionable piece of UI</p>
+<p>By default, <code>o-btn</code> elements are transparent and are meant to be extended by
+type-size, color and background-color utils, and by configurable button object modifiers.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot; class=&#39;o-btn&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; class=&#39;o-btn&#39;value=&#39;An `input` element&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button([$from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-small">
+			<h3>Button (small)</h3>
+			<div>
+				<p><strong>.o-btn--small</strong></p>
+<p>A <code>small</code> button.</p>
+<p>Changes the padding of the button, text size should be modified using type-size utils.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--small&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--small&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--small&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: small[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-large">
+			<h3>Button (large)</h3>
+			<div>
+				<p><strong>.o-btn--large</strong></p>
+<p>A <code>large</code> button.</p>
+<p>Changes the padding of the button, text size should be modified using type-size utils.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--large&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--large&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--large&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: large[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-outlined">
+			<h3>Button (outlined)</h3>
+			<div>
+				<p><strong>.o-btn--outline</strong></p>
+<p>An outlined button, extends <code>.o-btn</code> in the markup.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--outline demo-crimson&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--outline demo-teal&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--outline  demo-deeppink&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: outline[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-rounded">
+			<h3>Button (rounded)</h3>
+			<div>
+				<p><strong>.o-btn--round</strong></p>
+<p>A rounded button, extends <code>.o-btn</code> in the markup.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--round  demo-bgc&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--round  demo-bgc&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--round  demo-bgc&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: round[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-primary">
+			<h3>Button (primary)</h3>
+			<div>
+				<p><strong>.o-btn--primary</strong></p>
+<p>A <code>primary</code> modifier, extends <code>.o-btn</code> in the markup.</p>
+<p>Style is defined in the <code>primary</code> key of the <code>$jigsass-btn-modifiers</code> variable.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--primary&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--primary&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--primary&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: primary[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-facebook">
+			<h3>Button (facebook)</h3>
+			<div>
+				<p><strong>.o-btn--facebook</strong></p>
+<p>A <code>facebook</code> modifier, extends <code>.o-btn</code> in the markup.</p>
+<p>Style is defined in the <code>facebook</code> key of the <code>$jigsass-btn-modifiers</code> variable.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--facebook&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--facebook&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--facebook&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: facebook[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-twitter">
+			<h3>Button (twitter)</h3>
+			<div>
+				<p><strong>.o-btn--twitter</strong></p>
+<p>A <code>twitter</code> modifier, extends <code>.o-btn</code> in the markup.</p>
+<p>Style is defined in the <code>twitter</code> key of the <code>$jigsass-btn-modifiers</code> variable.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--twitter&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--twitter&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--twitter&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: twitter[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="button-action">
+			<h3>Button (action)</h3>
+			<div>
+				<p><strong>.o-btn--action</strong></p>
+<p>A <code>action</code> modifier, extends <code>.o-btn</code> in the markup.</p>
+<p>Style is defined in the <code>action</code> key of the <code>$jigsass-btn-modifiers</code> variable.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn--action&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn--action&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn--action&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: action[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="disabled-button">
+			<h3>Disabled Button</h3>
+			<div>
+				<p><strong>.o-btn-is-disabled</strong></p>
+<p>A disabled button.</p>
+<p>Style is defined in the <code>$jigsass-btn-disabled</code> variable.</p>
+<pre><code class="lang-example:html">&lt;div class=&#39;demo-wrapper&#39;&gt;
+  &lt;button type=&#39;button&#39; class=&#39;o-btn o-btn-is-disabled&#39;&gt;A `button` element&lt;/button&gt;
+  &lt;a href=&quot;#&quot;  class=&#39;o-btn o-btn-is-disabled  demo-crimson&#39;&gt;An `a` element&lt;/a&gt;
+  &lt;input type=&#39;button&#39; value=&#39;An `input` element&#39; class=&#39;o-btn o-btn-is-disabled  demo-teal&#39; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h4 id="include-with-">include with:</h4>
+<pre><code class="lang-scss">@include jigsass-button($modifier: is-disabled[, $from, $until, $misc]);
+</code></pre>
+<h4 id="related-mixins-">Related Mixins:</h4>
+<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
+
+				
+			</div>
+		</section>
+		
+			</div>
+		</section>
+		
+	<footer>Last modified Sunday, 17 April 2016 15:44</footer>
+</main>
+<script src="prism.js"></script>
+<script src="examples.js"></script>
+<script src="script.js"></script>
+
