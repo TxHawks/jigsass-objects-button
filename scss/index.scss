@@ -1,0 +1,840 @@
+// *************************************
+//
+// # jigsass-objects-button
+// -> Unopinionated button object
+//
+// Author: TxHawks (tofu.hawks@gmail.com)
+// https://txhawks.github.com/jigsass-objects-button
+// https://github.com/txhwaks/jigsass-objects-button/
+//
+// *************************************
+
+@charset 'UTF-8';
+
+// -------------------------------------
+// Dependencies
+// -------------------------------------
+
+@if (not mixin-exists(jigsass-define-object)) {
+  @error '`jigsass-objects-button` has a dependency on `jigsass-tools-selectors`.
+    Please import it before this file.';
+}
+
+
+
+
+
+// -------------------------------------
+// Introduction
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Buttons
+title: Introduction
+order: -10
+---
+
+Unopinionated and configurable button objects
+
+The JigSass Button object is built for maximal flexibility, providing only very basic styles
+as default. JigSass Button objects are transparent by default, and are meant to be extended by
+type-size, color and background-color utils, and by configurable button object modifiers.
+
+
+#### Installation
+
+Using npm:
+
+```sh
+npm i -S jigsass-objects-button
+```
+
+#### Usage
+First, you need to import JigSass Button:
+
+```scss
+@import 'path/to/jigsass-objects-button/scss/index';
+```
+
+And optionally [reconfigure](#configuration) the defaults to your liking.
+
+Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
+In order to use its classes, you would have to first explicitly indicate your intention to use
+them, using the [jigsass-button](#button-mixin) mixin, Leaving us with small and maintainable css:
+
+```scss
+@include jigsass-button([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
+```
+
+All JigSass Button classes are responsive-enabled, using
+[JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
+variable.
+
+Based on the arguments passed to the jigsass-button mixin, responsive modifiers are
+generated according to the following logic:
+
+```scss
+.o-button[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+```
+
+So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
+as `600px`, `1024px` and `(orientation: landscape)` respectively,
+
+```scss
+@include jigsass-button($modifier: outline);
+```
+will generate the `.o-btn--outline` class, which is not limited to any media-query.
+
+```scss
+@include jigsass-button( $modifier: outline, $until: medium);
+```
+
+will generate the `.o-btn--outline--until-medium` class, which will be in effect at
+`(max-width: 37.49em)` and will override styles in the default class until that point.
+
+```scss
+@include jigsass-button($modifier: facebook, $from: large, $misc: landscape);
+```
+
+will generate the `.o-btn--facebook--from-large-when-landscape` class, which will go into
+effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
+class under these  conditions.
+
+Regardless of how many times a class is included, or where, it will only be generated once,
+where the `jigsass-objects-button` partial was imported, leaving us with a css file as small
+as possible, and a predictable cascade.
+
+
+**License:** MIT
+*/
+// stylelint-enable
+
+
+
+
+
+// -------------------------------------
+// Variables
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Buttons
+title: Configuration
+order: -1
+---
+JigSass Button allows for some modification through configuration variables.
+Redefine them to your liking _before_ importing JigSass Buttons.
+
+
+#### Button Padding
+```scss
+$jigsass-btn-padding
+```
+
+**Type:** `Map`
+
+A map of button padding modifiers, each key should contain a list of two
+unitless numbers, representing the number of rhythm units used as padding
+on the horizontal and vertical axes, respectively.
+
+**Default:** `(default: 2 1)`
+
+**Properties:**
+
+Name | Description | Type | Default Value
+--- | --- | --- | ---
+default | Sets the padding of default button object | List | 2 1
+
+<p></p>
+
+**Example:**
+```scss
+$jigsass-btn-padding: (
+  default: 2 1,
+  small: 1 0.5,
+  large: 3 3,
+);
+```
+
+
+#### Button Outline
+```scss
+$jigsass-btn-outline
+```
+
+**Type:** `List`
+
+The border width and style (and optionally color) of outlined buttons (`.o-btn--outline`)
+
+**Default:** `1px solid`
+
+
+#### Button Style
+```scss
+$jigsass-btn-style
+```
+
+**Type:** `Map`
+
+Style declarations to add to the `.o-btn` class.
+
+**Default:** `()`
+
+**Example:**
+```scss
+$jigsass-btn-style: (
+  transition: all 0.25s ease-out,
+);
+```
+
+
+#### Button Modifiers
+```scss
+$jigsass-btn-modifiers
+```
+
+**Type:** `Map`
+
+CSS declarations for button modifiers, with each modifier being a nested
+map at the first level.
+
+**Default:** `()`
+
+**Example:**
+```scss
+$jigsass-btn-modifiers: (
+  primary: (
+    background-color: #09a5d9,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#09a5d9, 5%),
+    )
+  ),
+  facebook: (
+    background-color: #3b5998,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#3b5998, 5%),
+    )
+  ),
+  twitter: (
+    background-color: #55acee,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#55acee, 5%),
+    )
+  ),
+  gplus: (
+    background-color: #dc4e41,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#dc4e41, 5%),
+    )
+  ),
+);
+
+
+#### Disabled Buttons
+```scss
+$jigsass-btn-disabled
+```
+
+**Type:** `Map`
+
+Style declarations for the `.o-btn-is-disabled` class.
+
+**Default:** `
+```scss
+(
+  opacity: 0.4,
+  cursor: default,
+)
+```
+*/
+// stylelint-enable
+
+
+/// Button padding modifiers
+///
+/// A map of button padding modifiers, each key should contain a list of two
+/// unitless numbers, representing the number of rhythm units used as padding
+/// on the horizontal and vertical axes, respectively.
+/// ---
+/// @prop {List} default
+///   Sets the padding of default button object.
+/// ---
+/// @example
+///   $jigsass-btn-padding: (
+///     default: 2 1,
+///     small: 1 0.5,
+///     large: 3 3,
+///   );
+/// ---
+/// @type Map
+/// ---
+$jigsass-btn-padding: (
+  default: 2 1,
+) !default;
+
+
+/// The border width and style (and optionally color) of
+/// outlined buttons
+/// ---
+/// @type {List}
+$jigsass-btn-outline: 1px solid !default;
+
+
+/// Style declarations to add to the `.o-btn` class.
+/// ---
+/// @example
+///   $jigsass-btn-style: (
+///     transition: all 0.25s ease-out,
+///   );
+/// ---
+/// @type Map
+/// ---
+$jigsass-btn-style: () !default;
+
+
+/// Button modifiers
+///
+/// CSS declarations for button modifiers, with each modifier being a nested
+/// map at the first level.
+/// ---
+/// @example
+/// $jigsass-btn-modifiers: (
+///   primary: (
+///     background-color: #09a5d9,
+///     color: #fff,
+///
+///     '&:hover, &:focus, &:active': (
+///       background-color: darken(#09a5d9, 5%),
+///     )
+///   ),
+///   facebook: (
+///     background-color: #3b5998,
+///     color: #fff,
+///
+///     '&:hover, &:focus, &:active': (
+///       background-color: darken(#3b5998, 5%),
+///     )
+///   ),
+///   twitter: (
+///     background-color: #55acee,
+///     color: #fff,
+///
+///     '&:hover, &:focus, &:active': (
+///       background-color: darken(#55acee, 5%),
+///     )
+///   ),
+///   gplus: (
+///     background-color: #dc4e41,
+///     color: #fff,
+///
+///     '&:hover, &:focus, &:active': (
+///       background-color: darken(#dc4e41, 5%),
+///     )
+///   ),
+/// );
+/// ---
+/// @type Map
+/// ---
+$jigsass-btn-modifiers: () !default;
+
+/// Style declarations for the `.o-btn-is-disabled` class.
+/// ---
+/// @type Map
+/// ---
+$jigsass-btn-disabled: (
+  cursor: default,
+  opacity: .4,
+) !default;
+
+
+
+
+// Used internally to store doclets
+$_doclet-store: () !default;
+
+// Used internally to ordering doclets
+$_jigsass-button-i: 1;
+
+
+
+
+// -------------------------------------
+// Mixins
+// -------------------------------------
+
+// stylelint-disable
+/* ---
+section: Buttons
+title: Button Mixin
+order: 0
+---
+```scss
+@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) { ... }
+```
+
+
+#### Description
+Generates an `o-btn` or a button modifier class, optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+
+#### Parameters
+Name | Description | Type | Default Value
+--- | --- | --- | ---
+`$modifier` | A `o-btn` modifier. | `String` or `Boolean` | false
+`$from` | The name of breakpoint used as the min-width condition | `String` or `Boolean` | false
+`$until` | The name of breakpoint used as the max-width condition | `String` or `Boolean` | false
+`$misc` | The name of a miscellaneous media query condition | `String` or `Boolean` | false
+
+
+#### Example
+```scss
+@include jigsass-button($from: medium);
+```
+
+Will generate:
+```scss
+@media (min-width: 37.5em) {
+  .o-btn--from-medium { ... }
+}
+```
+*/
+// stylelint-enable
+/// Generates an `o-btn` or a button modifier class,
+/// optionally limited to a specific breakpoint defined
+/// in $jigsass-breakpoints
+/// ---
+/// @param {String | Boolean} $modifier [false]
+///   A button modifier, if relevant.
+/// @param {String | Boolean} $from [false]
+///   The name of breakpoint used as the min-width condition.
+/// @param {String | Boolean} $until [false]
+///   The name of breakpoint used as the max-width condition.
+/// @param {String | Boolean} $misc [false]
+///   The name of a miscellaneous media query condition.
+/// ---
+/// @example scss - SCSS input
+///   @include jigsass-button($from: medium);
+///
+/// @example scss - CSS output
+///   @media (min-width: 37.5em) {
+///     .o-btn--from-medium { ... }
+///   }
+/// ---
+@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) {
+  @if (not mixin-exists(jigsass-object)) {
+    @error '`jigsass-objects-button` has a dependency on `jigsass-tools-selectors. ' +
+      'Please import it before this file.';
+  }
+
+  @if ($modifier == is-disabled) {
+    @include jigsass-object(o-btn-is-disabled, $from, $until, $misc, false);
+  }
+  @else {
+    @include jigsass-object(o-btn, $from, $until, $misc, $modifier);
+  }
+}
+
+
+
+
+
+// -------------------------------------
+// Definitions
+// -------------------------------------
+
+@include jigsass-define-object(o-btn) {
+  @include jigsass-classname() {
+    $border-width: nth($jigsass-btn-outline, 1);
+    $padding: map-get($jigsass-btn-padding, default);
+    @if ($padding) {
+      $h-padding: nth($padding, 1);
+      $v-padding: if(
+        length($padding) > 1,
+        nth($padding, 2),
+        $h-padding
+      );
+
+      @if ($h-padding == $v-padding) {
+        @include jigsass-borders(
+          $width: $border-width,
+          $lines: $h-padding,
+          $style: solid transparent
+        );
+      }
+      @else {
+        @include jigsass-border-horizontal(
+          $width: $border-width,
+          $lines: $v-padding,
+          $style: solid transparent
+        );
+        @include jigsass-border(
+          $side: left,
+          $width: $border-width,
+          $lines: $h-padding,
+          $style: solid transparent
+        );
+        @include jigsass-border(
+          $side: right,
+          $width: $border-width,
+          $lines: $h-padding,
+          $style: solid transparent
+        );
+      }
+    }
+
+    appearance: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    margin: 0;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
+
+    @if (length($jigsass-btn-style) > 0) {
+      @include jigsass-map2styles($jigsass-btn-style); // [1]
+    }
+
+    &::moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
+
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      // stylelint-disable
+/* ---
+section: Buttons
+title: Button (base)
+order: #{$_jigsass-button-i}
+---
+**.o-btn**
+
+An actionable piece of UI
+
+By default, `o-btn` elements are transparent and are meant to be extended by
+type-size, color and background-color utils, and by configurable button object modifiers.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn'>A `button` element</button>
+  <a href="#" class='o-btn'>An `a` element</a>
+  <input type='button' class='o-btn'value='An `input` element' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button([$from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+      // stylelint-enable
+      $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+    }
+  }
+
+  // ----- Size Modifiers ----- //
+  @each $modifier, $values in $jigsass-btn-padding {
+    @if ($modifier != default) {
+      @include jigsass-classname($modifier: $modifier) {
+        $modifier: $jigsass-obj-current-modifier;
+        $border-width: nth($jigsass-btn-outline, 1);
+        $padding: map-get($jigsass-btn-padding, $modifier);
+        @if ($padding) {
+          $h-padding: nth($padding, 1);
+          $v-padding: if(
+            length($padding) > 1,
+            nth($padding, 2),
+            $h-padding
+          );
+
+          @if ($h-padding == $v-padding) {
+            @include jigsass-borders(
+              $width: $border-width,
+              $lines: $h-padding,
+              $style: solid transparent
+            );
+          }
+          @else {
+            @include jigsass-border-horizontal(
+              $width: $border-width,
+              $lines: $v-padding,
+              $style: solid transparent
+            );
+            @include jigsass-border(
+              $side: left,
+              $width: $border-width,
+              $lines: $h-padding,
+              $style: solid transparent
+            );
+            @include jigsass-border(
+              $side: right,
+              $width: $border-width,
+              $lines: $h-padding,
+              $style: solid transparent
+            );
+          }
+        }
+
+        $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+        @if (not index($_doclet-store, $_doclet)) {
+          $_doclet-store: append($_doclet-store, $_doclet) !global;
+          // stylelint-disable
+/* ---
+section: Buttons
+title: Button (#{$modifier})
+order: #{$_jigsass-button-i + 10}
+---
+
+**.o-btn--#{$jigsass-obj-current-modifier}**
+
+A `#{$modifier}` button.
+
+Changes the padding of the button, text size should be modified using type-size utils.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn o-btn--#{$modifier}'>A `button` element</button>
+  <a href="#"  class='o-btn o-btn--#{$modifier}'>An `a` element</a>
+  <input type='button' value='An `input` element' class='o-btn o-btn--#{$modifier}' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button($modifier: #{$modifier}[, $from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+          // stylelint-enable
+          $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+        }
+      }
+    }
+  }
+
+
+  // ----- Outline Modifier ----- //
+  @include jigsass-classname($modifier: outline) {
+
+    $style: nth($jigsass-btn-outline, 2);
+    $color: if(length($jigsass-btn-style) == 3, nth($jigsass-btn-style, 3), false);
+
+    border-color: $color or currentColor;
+    border-style: $style;
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      // stylelint-disable
+/* ---
+section: Buttons
+title: Button (outlined)
+order: #{$_jigsass-button-i + 100}
+---
+
+**.o-btn--#{$jigsass-obj-current-modifier}**
+
+An outlined button, extends `.o-btn` in the markup.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn o-btn--outline demo-crimson'>A `button` element</button>
+  <a href="#"  class='o-btn o-btn--outline demo-teal'>An `a` element</a>
+  <input type='button' value='An `input` element' class='o-btn o-btn--outline  demo-deeppink' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button($modifier: outline[, $from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+      // stylelint-enable
+      $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+    }
+  }
+
+
+  // ----- Rounded Modifier ----- //
+  @include jigsass-classname($modifier: round) {
+
+    border-radius: 100px;
+
+    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    @if (not index($_doclet-store, $_doclet)) {
+      $_doclet-store: append($_doclet-store, $_doclet) !global;
+      // stylelint-disable
+/* ---
+section: Buttons
+title: Button (rounded)
+order: #{$_jigsass-button-i + 150}
+---
+
+**.o-btn--#{$jigsass-obj-current-modifier}**
+
+A rounded button, extends `.o-btn` in the markup.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn o-btn--round  demo-bgc'>A `button` element</button>
+  <a href="#"  class='o-btn o-btn--round  demo-bgc'>An `a` element</a>
+  <input type='button' value='An `input` element' class='o-btn o-btn--round  demo-bgc' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button($modifier: round[, $from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+      // stylelint-enable
+      $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+    }
+  }
+
+
+  // ----- Style Modifiers ----- //
+  @each $modifier, $ruleset in $jigsass-btn-modifiers {
+    @include jigsass-classname($modifier: $modifier) {
+      $modifier: $jigsass-obj-current-modifier;
+      $ruleset: map-get($jigsass-btn-modifiers, $modifier);
+
+      @include jigsass-map2styles($ruleset);
+
+      $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+      @if (not index($_doclet-store, $_doclet)) {
+        $_doclet-store: append($_doclet-store, $_doclet) !global;
+        // stylelint-disable
+/* ---
+section: Buttons
+title: Button (#{$modifier})
+order: #{$_jigsass-button-i + 200}
+---
+
+**.o-btn--#{$jigsass-obj-current-modifier}**
+
+A `#{$modifier}` modifier, extends `.o-btn` in the markup.
+
+Style is defined in the `#{$modifier}` key of the `$jigsass-btn-modifiers` variable.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn o-btn--#{$modifier}'>A `button` element</button>
+  <a href="#"  class='o-btn o-btn--#{$modifier}'>An `a` element</a>
+  <input type='button' value='An `input` element' class='o-btn o-btn--#{$modifier}' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button($modifier: #{$modifier}[, $from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+        // stylelint-enable
+        $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+      }
+    }
+  }
+}
+
+// ----- State ----- //
+
+@include jigsass-define-object(o-btn-is-disabled) {
+  @include jigsass-classname {
+    @if (length($jigsass-btn-disabled) > 0) {
+      @include jigsass-map2styles($jigsass-btn-disabled);
+    }
+  }
+
+  $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+  @if (not index($_doclet-store, $_doclet)) {
+    $_doclet-store: append($_doclet-store, $_doclet) !global;
+    // stylelint-disable
+/* ---
+section: Buttons
+title: Disabled Button
+order: #{$_jigsass-button-i + 500}
+---
+
+**.o-btn-is-disabled**
+
+A disabled button.
+
+Style is defined in the `$jigsass-btn-disabled` variable.
+
+```example:html
+<div class='demo-wrapper'>
+  <button type='button' class='o-btn o-btn-is-disabled'>A `button` element</button>
+  <a href="#"  class='o-btn o-btn-is-disabled  demo-crimson'>An `a` element</a>
+  <input type='button' value='An `input` element' class='o-btn o-btn-is-disabled  demo-teal' />
+</div>
+```
+
+#### include with:
+```scss
+@include jigsass-button($modifier: is-disabled[, $from, $until, $misc]);
+```
+
+
+#### Related Mixins:
+[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
+optionally limited to a specific breakpoint defined in
+[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
+*/
+    // stylelint-enable
+    $_jigsass-button-i: $_jigsass-button-i + 1 !global;
+  }
+}

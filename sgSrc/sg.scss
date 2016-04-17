@@ -1,0 +1,161 @@
+// *************************************
+//
+// # jigsass-objects-button style guide generator
+// -> It is a best practice for JigSass modules to
+//    not automatically generate css and documentation
+//    on `@import`. Please use this file to enable css
+//    (and comments) generation.
+//
+//    Files in `sgSrc/assets` will be available
+//    for use in the style guide
+//
+// *************************************
+
+@charset 'UTF-8';
+
+// --------------------
+// Dependencies
+// --------------------
+@import '../node_modules/jigsass-tools-maps/scss/index';
+@import '../node_modules/jigsass-tools-mq/scss/index';
+@import '../node_modules/jigsass-tools-typography/scss/index';
+@import '../node_modules/jigsass-tools-strings/scss/index';
+@import '../node_modules/jigsass-tools-bidi/scss/index';
+@import '../node_modules/jigsass-tools-selectors/scss/index';
+
+
+
+
+
+// --------------------
+// Styles
+// --------------------
+
+$jigsass-mdcss-brand-color: #09a5d9;
+
+$jigsass-btn-padding: (
+  default: 2 1,
+  small: 1 0.5,
+  large: 3 3,
+);
+
+$jigsass-btn-outline: 1px solid;
+
+$jigsass-btn-modifiers: (
+  primary: (
+    background-color: #09a5d9,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#09a5d9, 5%),
+    )
+  ),
+  facebook: (
+    background-color: #3b5998,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#3b5998, 5%),
+    )
+  ),
+  twitter: (
+    background-color: #55acee,
+    color: #fff,
+
+    '&:hover, &:focus, &:active': (
+      background-color: darken(#55acee, 5%),
+    )
+  ),
+  action: (
+    border-bottom-color: $jigsass-mdcss-brand-color,
+    color: $jigsass-mdcss-brand-color,
+    position: relative,
+
+    '&:after': (
+      background-color: $jigsass-mdcss-brand-color,
+      bottom: -1 * nth($jigsass-btn-outline, 1),
+      content: '',
+      height: .5rem,
+      left: -1 * nth($jigsass-btn-outline, 1),
+      right: -1 * nth($jigsass-btn-outline, 1),
+      position: absolute,
+      transform: scaleX(0),
+      transform-origin: 0 0,
+      transition: transform 0.25s,
+    ),
+
+    '&:hover, &:focus, &:active': (
+      '&:after': (
+        transform: scaleX(1),
+      )
+    )
+  ),
+);
+
+
+@import 'index.scss';
+
+@include jigsass-button;
+
+// Size modifiers
+@include jigsass-button($modifier: small);
+@include jigsass-button($modifier: large);
+
+// Outline modifiers
+@include jigsass-button($modifier: outline);
+
+// Round modifiers
+@include jigsass-button($modifier: round);
+
+// Style modifiers
+@include jigsass-button($modifier: primary);
+@include jigsass-button($modifier: facebook);
+@include jigsass-button($modifier: twitter);
+@include jigsass-button($modifier: action);
+
+// Disabled button
+@include jigsass-button($modifier: is-disabled);
+
+
+// --------------------
+// Demo Styles
+// --------------------
+
+@include jigsass-set-baseline;
+html {
+  font-family: sans-serif;
+}
+
+.demo-wrapper > * {
+   margin-right: 4rem;
+}
+
+figure,
+ul,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.demo-crimson {
+  color: crimson;
+}
+
+.demo-teal {
+  color: teal;
+}
+
+.demo-deeppink {
+  color: deeppink;
+}
+
+.demo-bgc {
+  color: #fff;
+  background-color: $jigsass-mdcss-brand-color;
+}
