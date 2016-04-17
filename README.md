@@ -1,5 +1,4 @@
 # JigSass Objects Button
-[![NPM version][npm-image]][npm-url]  [![Dependency Status][daviddm-image]][daviddm-url]   
 
   > Unopinionated and configurable button objects
 
@@ -188,6 +187,7 @@ $jigsass-btn-modifiers: (
     )
   ),
 );
+```
 
 
 #### Disabled Buttons
@@ -262,10 +262,3 @@ In addition, any file in `sgSrc/assets` will be available for use in the style g
 
 **License:** MIT
 
-
-
-[npm-image]: https://badge.fury.io/js/jigsass-objects-button.svg
-[npm-url]: https://npmjs.org/package/jigsass-objects-button
-
-[daviddm-image]: https://david-dm.org/TxHawks/jigsass-objects-button.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/TxHawks/jigsass-objects-button
