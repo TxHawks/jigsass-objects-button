@@ -24,12 +24,12 @@
 				</li>
 				
 				<li>
-					<a href="#configuration"><span>Configuration</span></a>
+					<a href="#css-outpout"><span>CSS Outpout</span></a>
 					
 				</li>
 				
 				<li>
-					<a href="#button-mixin"><span>Button Mixin</span></a>
+					<a href="#configuration"><span>Configuration</span></a>
 					
 				</li>
 				
@@ -117,35 +117,142 @@ type-size, color and background-color utils, and by configurable button object m
 <p>And optionally <a href="#configuration">reconfigure</a> the defaults to your liking.</p>
 <p>Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the <a href="#button-mixin">jigsass-button</a> mixin, Leaving us with small and maintainable css:</p>
-<pre><code class="lang-scss">@include jigsass-button([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-</code></pre>
+them by enabling their generation in the associated <a href="#css-output">configurations map</a>, Leaving
+us only with CSS we need:</p>
 <p>All JigSass Button classes are responsive-enabled, using
 <a href="https://txhawks.github.io/jigsass-tools-mq/">JigSass MQ</a> and the breakpoints defined in the
 <a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>
 variable.</p>
-<p>Based on the arguments passed to the jigsass-button mixin, responsive modifiers are
+<p>Based enabled selectors in the <a href="#css-output">configuration map</a>, responsive modifiers are
 generated according to the following logic:</p>
-<pre><code class="lang-scss">.o-button[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+<pre><code class="lang-scss">.o-btn[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 </code></pre>
 <p>So, assuming the <code>medium</code>, <code>large</code> and <code>landscape</code> breakpoints are defined in <code>$jigsass-breakpoints</code>
 as <code>600px</code>, <code>1024px</code> and <code>(orientation: landscape)</code> respectively,</p>
-<pre><code class="lang-scss">@include jigsass-button($modifier: outline);
+<pre><code class="lang-scss">$jigsass-btn-conf: (
+  no-breakpoint: (
+    outline: true,
+  ),
+  until-medium: (
+    outline: true,
+  ),
+  from-large-when-landscape: (
+    facebook: true,
+  ),
+)
 </code></pre>
-<p>will generate the <code>.o-btn--outline</code> class, which is not limited to any media-query.</p>
-<pre><code class="lang-scss">@include jigsass-button( $modifier: outline, $until: medium);
-</code></pre>
-<p>will generate the <code>.o-btn--outline--until-medium</code> class, which will be in effect at
-<code>(max-width: 37.49em)</code> and will override styles in the default class until that point.</p>
-<pre><code class="lang-scss">@include jigsass-button($modifier: facebook, $from: large, $misc: landscape);
-</code></pre>
-<p>will generate the <code>.o-btn--facebook--from-large-when-landscape</code> class, which will go into
-effect at <code>(min-width: 64em) and (orientation: landscape)</code> and will override styles in the default
-class under these  conditions.</p>
-<p>Regardless of how many times a class is included, or where, it will only be generated once,
-where the <code>jigsass-objects-button</code> partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.</p>
+<p>will generate the following classes:</p>
+<ul>
+<li><code>.o-btn--outline</code>, which is not limited to any media-query.</li>
+<li><code>.o-btn--outline--until-medium</code>, which will be in effect at
+<code>(max-width: 37.49em)</code> and will override styles in the default class
+until that point.</li>
+<li><code>.o-btn--facebook--from-large-when-landscape</code>, which will go into effect at
+<code>(min-width: 64em) and (orientation: landscape)</code> and will override styles
+in the default class under these  conditions.</li>
+</ul>
 <p><strong>License:</strong> MIT</p>
+
+				
+			</div>
+		</section>
+		
+		<section id="css-outpout">
+			<h3>CSS Outpout</h3>
+			<div>
+				<p>By default, JigSass Button does not generate any CSS output when imported into
+a stylesheet. CSS output must be enabled on a per-selector basis, inside the
+dedicated configuration maps:</p>
+<h4 id="buttons-and-modifier-classes">Buttons and modifier classes</h4>
+<pre><code class="lang-scss">$jigsass-btn-config
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+button  button modifier classes.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-btn-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-btn`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-btn--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-btn--foo--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-btn--foo--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-btn--foo--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+);
+</code></pre>
+<h4 id="disabled-buttons">Disabled buttons</h4>
+<pre><code class="lang-scss">$jigsass-btn-disabled-config
+</code></pre>
+<p><strong>Type:</strong> <code>Map</code></p>
+<p>Configuration map for enabling generation of
+disabled button classes.</p>
+<p><strong>Default:</strong> <code>()</code></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-scss">$jigsass-btn-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--from-&lt;bp-name&gt;`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--until-&lt;bp-name&gt;`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-&lt;bp-name&gt;: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--when-&lt;bp-name&gt;`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+  from-&lt;bp-name&gt;-until-&lt;bp-name&gt;-when-&lt;bp-name&gt;: (...);
+);
+</code></pre>
 
 				
 			</div>
@@ -262,64 +369,6 @@ map at the first level.</p>
   opacity: 0.4,
   cursor: default,
 )
-</code></pre>
-
-				
-			</div>
-		</section>
-		
-		<section id="button-mixin">
-			<h3>Button Mixin</h3>
-			<div>
-				<pre><code class="lang-scss">@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) { ... }
-</code></pre>
-<h4 id="description">Description</h4>
-<p>Generates an <code>o-btn</code> or a button modifier class, optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
-<h4 id="parameters">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$modifier</code></td>
-<td>A <code>o-btn</code> modifier.</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$from</code></td>
-<td>The name of breakpoint used as the min-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$until</code></td>
-<td>The name of breakpoint used as the max-width condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>$misc</code></td>
-<td>The name of a miscellaneous media query condition</td>
-<td><code>String</code> or <code>Boolean</code></td>
-<td>false</td>
-</tr>
-</tbody>
-</table>
-<h4 id="example">Example</h4>
-<pre><code class="lang-scss">@include jigsass-button($from: medium);
-</code></pre>
-<p>Will generate:</p>
-<pre><code class="lang-scss">@media (min-width: 37.5em) {
-  .o-btn--from-medium { ... }
-}
 </code></pre>
 
 				
@@ -460,10 +509,6 @@ optionally limited to a specific breakpoint defined in
 <h4 id="include-with-">include with:</h4>
 <pre><code class="lang-scss">@include jigsass-button($modifier: primary[, $from, $until, $misc]);
 </code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -484,10 +529,6 @@ optionally limited to a specific breakpoint defined in
 <h4 id="include-with-">include with:</h4>
 <pre><code class="lang-scss">@include jigsass-button($modifier: facebook[, $from, $until, $misc]);
 </code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -508,10 +549,6 @@ optionally limited to a specific breakpoint defined in
 <h4 id="include-with-">include with:</h4>
 <pre><code class="lang-scss">@include jigsass-button($modifier: twitter[, $from, $until, $misc]);
 </code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -532,10 +569,6 @@ optionally limited to a specific breakpoint defined in
 <h4 id="include-with-">include with:</h4>
 <pre><code class="lang-scss">@include jigsass-button($modifier: action[, $from, $until, $misc]);
 </code></pre>
-<h4 id="related-mixins-">Related Mixins:</h4>
-<p><a href="#button-mixin">jigsass-button</a>: Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-<a href="https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints">$jigsass-breakpoints</a>).</p>
 
 				
 			</div>
@@ -568,7 +601,7 @@ optionally limited to a specific breakpoint defined in
 			</div>
 		</section>
 		
-	<footer>Last modified Sunday, 17 April 2016 15:50</footer>
+	<footer>Last modified Thursday, 21 April 2016 17:28</footer>
 </main>
 <script src="prism.js"></script>
 <script src="examples.js"></script>
