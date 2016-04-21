@@ -92,29 +92,36 @@ $jigsass-btn-modifiers: (
   ),
 );
 
+$jigsass-btn-conf: (
+  no-breakpoint: (
+    no-modifier: true,
 
-@import 'index.scss';
+    // Size modifiers
+    small: true,
+    large: true,
 
-@include jigsass-button;
+    // Outline modifiers
+    outline: true,
 
-// Size modifiers
-@include jigsass-button($modifier: small);
-@include jigsass-button($modifier: large);
+    // Round modifiers
+    round: true,
 
-// Outline modifiers
-@include jigsass-button($modifier: outline);
-
-// Round modifiers
-@include jigsass-button($modifier: round);
-
-// Style modifiers
-@include jigsass-button($modifier: primary);
-@include jigsass-button($modifier: facebook);
-@include jigsass-button($modifier: twitter);
-@include jigsass-button($modifier: action);
+    // Style modifiers
+    primary: true,
+    facebook: true,
+    twitter: true,
+    action: true,
+  ),
+);
 
 // Disabled button
-@include jigsass-button($modifier: is-disabled);
+$jigsass-btn-disabled-conf: (
+  no-breakpoint: (
+    no-modifier: true,
+  ),
+);
+
+@import 'index.scss';
 
 
 // --------------------

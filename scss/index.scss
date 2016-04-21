@@ -15,7 +15,7 @@
 // Dependencies
 // -------------------------------------
 
-@if (not mixin-exists(jigsass-define-object)) {
+@if (not mixin-exists(jigsass-object)) {
   @error '`jigsass-objects-button` has a dependency on `jigsass-tools-selectors`.
     Please import it before this file.';
 }
@@ -61,50 +61,46 @@ And optionally [reconfigure](#configuration) the defaults to your liking.
 
 Like all other JigSass modules, JigSass Button does not automatically generate any CSS when imported.
 In order to use its classes, you would have to first explicitly indicate your intention to use
-them, using the [jigsass-button](#button-mixin) mixin, Leaving us with small and maintainable css:
-
-```scss
-@include jigsass-button([$modifier, $from-brekpoint, $until-breakpoint, $misc-breakpoint]);
-```
+them by enabling their generation in the associated [configurations map](#css-output), Leaving
+us only with CSS we need:
 
 All JigSass Button classes are responsive-enabled, using
 [JigSass MQ](https://txhawks.github.io/jigsass-tools-mq/) and the breakpoints defined in the
 [$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)
 variable.
 
-Based on the arguments passed to the jigsass-button mixin, responsive modifiers are
+Based enabled selectors in the [configuration map](#css-output), responsive modifiers are
 generated according to the following logic:
 
 ```scss
-.o-button[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
+.o-btn[--modifier][-[-from-{breakpoint-name}][-until-{breakpoint-name}][-misc-{breakpoint-name}]]
 ```
 
 So, assuming the `medium`, `large` and `landscape` breakpoints are defined in `$jigsass-breakpoints`
 as `600px`, `1024px` and `(orientation: landscape)` respectively,
 
 ```scss
-@include jigsass-button($modifier: outline);
-```
-will generate the `.o-btn--outline` class, which is not limited to any media-query.
-
-```scss
-@include jigsass-button( $modifier: outline, $until: medium);
-```
-
-will generate the `.o-btn--outline--until-medium` class, which will be in effect at
-`(max-width: 37.49em)` and will override styles in the default class until that point.
-
-```scss
-@include jigsass-button($modifier: facebook, $from: large, $misc: landscape);
+$jigsass-btn-conf: (
+  no-breakpoint: (
+    outline: true,
+  ),
+  until-medium: (
+    outline: true,
+  ),
+  from-large-when-landscape: (
+    facebook: true,
+  ),
+)
 ```
 
-will generate the `.o-btn--facebook--from-large-when-landscape` class, which will go into
-effect at `(min-width: 64em) and (orientation: landscape)` and will override styles in the default
-class under these  conditions.
-
-Regardless of how many times a class is included, or where, it will only be generated once,
-where the `jigsass-objects-button` partial was imported, leaving us with a css file as small
-as possible, and a predictable cascade.
+will generate the following classes:
+  - `.o-btn--outline`, which is not limited to any media-query.
+  - `.o-btn--outline--until-medium`, which will be in effect at
+    `(max-width: 37.49em)` and will override styles in the default class
+    until that point.
+  - `.o-btn--facebook--from-large-when-landscape`, which will go into effect at
+    `(min-width: 64em) and (orientation: landscape)` and will override styles
+    in the default class under these  conditions.
 
 
 **License:** MIT
@@ -122,12 +118,222 @@ as possible, and a predictable cascade.
 // stylelint-disable
 /* ---
 section: Buttons
+title: CSS Outpout
+order: -2
+---
+By default, JigSass Button does not generate any CSS output when imported into
+a stylesheet. CSS output must be enabled on a per-selector basis, inside the
+dedicated configuration maps:
+
+#### Buttons and modifier classes
+```scss
+$jigsass-btn-config
+```
+
+
+**Type:** `Map`
+
+Configuration map for enabling generation of
+button  button modifier classes.
+
+
+**Default:** `()`
+
+
+**Example:**
+```scss
+$jigsass-btn-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-btn`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-btn--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-btn--foo--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-btn--foo--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-btn--foo--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-<bp-name>-until-<bp-name>: (...);
+  from-<bp-name>-when-<bp-name>: (...);
+  until-<bp-name>-when-<bp-name>: (...);
+  from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+);
+```
+
+#### Disabled buttons
+```scss
+$jigsass-btn-disabled-config
+```
+
+
+**Type:** `Map`
+
+Configuration map for enabling generation of
+disabled button classes.
+
+
+**Default:** `()`
+
+
+**Example:**
+```scss
+$jigsass-btn-conf: (
+  no-breakpoint: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled`
+                        // class outside of any media query.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo`
+                        // modifier class outside of any media query.
+  ),
+  from-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--from-<bp-name>`
+                        // class inside a min-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  until-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--until-<bp-name>`
+                        // class inside a max-width media query
+                        // defined ins `$jigsass-breakpoints.length`.
+  ),
+  when-<bp-name>: (
+    no-modifier: true,  // Enables generation of the `.o-btn-is-disabled--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+    foo: true,          // Enables generation of the `.o-btn-is-disabled--foo--when-<bp-name>`
+                        // class inside a misc media query
+                        // defined ins `$jigsass-breakpoints.features`.
+  ),
+  from-<bp-name>-until-<bp-name>: (...);
+  from-<bp-name>-when-<bp-name>: (...);
+  until-<bp-name>-when-<bp-name>: (...);
+  from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+);
+```
+*/
+
+/// Configuration map for enabling generation of
+/// button and button modifier classes.
+/// ---
+/// @example
+///		$jigsass-btn-conf: (
+///    no-breakpoint: (
+///      no-modifier: true,  // Enables generation of the `.o-btn`
+///                          // class outside of any media query.
+///      foo: true,          // Enables generation of the `.o-btn--foo`
+///                          // modifier class outside of any media query.
+///    ),
+///    from-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///      foo: true,          // Enables generation of the `.o-btn--foo--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    until-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///     foo: true,          // Enables generation of the `.o-btn--foo--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    when-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///      foo: true,          // Enables generation of the `.o-btn--foo--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///    ),
+///    from-<bp-name>-until-<bp-name>: (...);
+///    from-<bp-name>-when-<bp-name>: (...);
+///    until-<bp-name>-when-<bp-name>: (...);
+///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+///  );
+/// ---
+/// @type {Map}
+/// ---
+$jigsass-btn-conf: () !default;
+
+/// Configuration map for enabling generation of
+/// disabled button classes.
+/// ---
+/// @example
+///		$jigsass-btn-disabled-conf: (
+///    no-breakpoint: (
+///      no-modifier: true,  // Enables generation of the `.o-btn-is-disabled`
+///                          // class outside of any media query.
+///      foo: true,          // Enables generation ofthe `.o-btn-is-disabled--foo`
+///                          // modifier class outside of any media query.
+///    ),
+///    from-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--from-<bp-name>`
+///                         // class inside a min-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///      foo: true,         // Enables generation of `.o-btn-is-disabled--foo--from-<bp-name>`
+///                         // class inside a min-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    until-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--until-<bp-name>`
+///                         // class inside a max-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///     foo: true,          // Enables generation of `.o-btn-is-disabled--foo--until-<bp-name>`
+///                         // class inside a max-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    when-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--when-<bp-name>`
+///                         // class inside a misc media query
+///                         // defined ins `$jigsass-breakpoints.features`.
+///      foo: true,         // Enables generation of `.o-btn-is-disabled--foo--when-<bp-name>`
+///                         // class inside a misc media query
+///                         // defined ins `$jigsass-breakpoints.features`.
+///    ),
+///    from-<bp-name>-until-<bp-name>: (...);
+///    from-<bp-name>-when-<bp-name>: (...);
+///    until-<bp-name>-when-<bp-name>: (...);
+///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+///  );
+/// ---
+/// @type {Map}
+/// ---
+$jigsass-btn-disabled-conf: () !default;
+
+
+/* ---
+section: Buttons
 title: Configuration
 order: -1
 ---
 JigSass Button allows for some modification through configuration variables.
 Redefine them to your liking _before_ importing JigSass Buttons.
-
 
 #### Button Padding
 ```scss
@@ -261,6 +467,95 @@ Style declarations for the `.o-btn-is-disabled` class.
 */
 // stylelint-enable
 
+/// Configuration map for enabling generation of
+/// button classes.
+/// ---
+/// @example
+///		$jigsass-btn-conf: (
+///    no-breakpoint: (
+///      no-modifier: true,  // Enables generation of the `.o-btn`
+///                          // class outside of any media query.
+///      foo: true,          // Enables generation of the `.o-btn--foo`
+///                          // modifier class outside of any media query.
+///    ),
+///    from-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///      foo: true,          // Enables generation of the `.o-btn--foo--from-<bp-name>`
+///                          // class inside a min-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    until-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///     foo: true,          // Enables generation of the `.o-btn--foo--until-<bp-name>`
+///                          // class inside a max-width media query
+///                          // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    when-<bp-name>: (
+///      no-modifier: true,  // Enables generation of the `.o-btn--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///      foo: true,          // Enables generation of the `.o-btn--foo--when-<bp-name>`
+///                          // class inside a misc media query
+///                          // defined ins `$jigsass-breakpoints.features`.
+///    ),
+///    from-<bp-name>-until-<bp-name>: (...);
+///    from-<bp-name>-when-<bp-name>: (...);
+///    until-<bp-name>-when-<bp-name>: (...);
+///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+///  );
+/// ---
+/// @type {Map}
+/// ---
+$jigsass-btn-conf: () !default;
+
+/// Configuration map for enabling generation of
+/// disabled button classes.
+/// ---
+/// @example
+///		$jigsass-btn-disabled-conf: (
+///    no-breakpoint: (
+///      no-modifier: true,  // Enables generation of the `.o-btn-is-disabled`
+///                          // class outside of any media query.
+///      foo: true,          // Enables generation ofthe `.o-btn-is-disabled--foo`
+///                          // modifier class outside of any media query.
+///    ),
+///    from-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--from-<bp-name>`
+///                         // class inside a min-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///      foo: true,         // Enables generation of `.o-btn-is-disabled--foo--from-<bp-name>`
+///                         // class inside a min-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    until-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--until-<bp-name>`
+///                         // class inside a max-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///     foo: true,          // Enables generation of `.o-btn-is-disabled--foo--until-<bp-name>`
+///                         // class inside a max-width media query
+///                         // defined ins `$jigsass-breakpoints.length`.
+///    ),
+///    when-<bp-name>: (
+///      no-modifier: true, // Enables generation of `.o-btn-is-disabled--when-<bp-name>`
+///                         // class inside a misc media query
+///                         // defined ins `$jigsass-breakpoints.features`.
+///      foo: true,         // Enables generation of `.o-btn-is-disabled--foo--when-<bp-name>`
+///                         // class inside a misc media query
+///                         // defined ins `$jigsass-breakpoints.features`.
+///    ),
+///    from-<bp-name>-until-<bp-name>: (...);
+///    from-<bp-name>-when-<bp-name>: (...);
+///    until-<bp-name>-when-<bp-name>: (...);
+///    from-<bp-name>-until-<bp-name>-when-<bp-name>: (...);
+///  );
+/// ---
+/// @type {Map}
+/// ---
+$jigsass-btn-disabled-conf: () !default;
 
 /// Button padding modifiers
 ///
@@ -374,77 +669,7 @@ $_jigsass-button-i: 1;
 // Mixins
 // -------------------------------------
 
-// stylelint-disable
-/* ---
-section: Buttons
-title: Button Mixin
-order: 0
----
-```scss
-@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) { ... }
-```
-
-
-#### Description
-Generates an `o-btn` or a button modifier class, optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
-
-#### Parameters
-Name | Description | Type | Default Value
---- | --- | --- | ---
-`$modifier` | A `o-btn` modifier. | `String` or `Boolean` | false
-`$from` | The name of breakpoint used as the min-width condition | `String` or `Boolean` | false
-`$until` | The name of breakpoint used as the max-width condition | `String` or `Boolean` | false
-`$misc` | The name of a miscellaneous media query condition | `String` or `Boolean` | false
-
-
-#### Example
-```scss
-@include jigsass-button($from: medium);
-```
-
-Will generate:
-```scss
-@media (min-width: 37.5em) {
-  .o-btn--from-medium { ... }
-}
-```
-*/
-// stylelint-enable
-/// Generates an `o-btn` or a button modifier class,
-/// optionally limited to a specific breakpoint defined
-/// in $jigsass-breakpoints
-/// ---
-/// @param {String | Boolean} $modifier [false]
-///   A button modifier, if relevant.
-/// @param {String | Boolean} $from [false]
-///   The name of breakpoint used as the min-width condition.
-/// @param {String | Boolean} $until [false]
-///   The name of breakpoint used as the max-width condition.
-/// @param {String | Boolean} $misc [false]
-///   The name of a miscellaneous media query condition.
-/// ---
-/// @example scss - SCSS input
-///   @include jigsass-button($from: medium);
-///
-/// @example scss - CSS output
-///   @media (min-width: 37.5em) {
-///     .o-btn--from-medium { ... }
-///   }
-/// ---
-@mixin jigsass-button($modifier: false, $from: false, $until: false, $misc: false) {
-  @if (not mixin-exists(jigsass-object)) {
-    @error '`jigsass-objects-button` has a dependency on `jigsass-tools-selectors. ' +
-      'Please import it before this file.';
-  }
-
-  @if ($modifier == is-disabled) {
-    @include jigsass-object(o-btn-is-disabled, $from, $until, $misc, false);
-  }
-  @else {
-    @include jigsass-object(o-btn, $from, $until, $misc, $modifier);
-  }
-}
+//
 
 
 
@@ -454,7 +679,7 @@ Will generate:
 // Definitions
 // -------------------------------------
 
-@include jigsass-define-object(o-btn) {
+@include jigsass-object(o-btn, $jigsass-btn-conf) {
   @include jigsass-classname() {
     $border-width: nth($jigsass-btn-outline, 1);
     $padding: map-get($jigsass-btn-padding, default);
@@ -523,7 +748,7 @@ Will generate:
     }
 
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
       // stylelint-disable
@@ -567,7 +792,7 @@ optionally limited to a specific breakpoint defined in
   @each $modifier, $values in $jigsass-btn-padding {
     @if ($modifier != default) {
       @include jigsass-classname($modifier: $modifier) {
-        $modifier: $jigsass-obj-current-modifier;
+        $modifier: $jigsass-obj-modifier;
         $border-width: nth($jigsass-btn-outline, 1);
         $padding: map-get($jigsass-btn-padding, $modifier);
         @if ($padding) {
@@ -606,7 +831,7 @@ optionally limited to a specific breakpoint defined in
           }
         }
 
-        $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+        $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
         @if (not index($_doclet-store, $_doclet)) {
           $_doclet-store: append($_doclet-store, $_doclet) !global;
           // stylelint-disable
@@ -616,7 +841,7 @@ title: Button (#{$modifier})
 order: #{$_jigsass-button-i + 10}
 ---
 
-**.o-btn--#{$jigsass-obj-current-modifier}**
+**.o-btn--#{$jigsass-obj-modifier}**
 
 A `#{$modifier}` button.
 
@@ -658,7 +883,7 @@ optionally limited to a specific breakpoint defined in
     border-color: $color or currentColor;
     border-style: $style;
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
       // stylelint-disable
@@ -668,7 +893,7 @@ title: Button (outlined)
 order: #{$_jigsass-button-i + 100}
 ---
 
-**.o-btn--#{$jigsass-obj-current-modifier}**
+**.o-btn--#{$jigsass-obj-modifier}**
 
 An outlined button, extends `.o-btn` in the markup.
 
@@ -702,7 +927,7 @@ optionally limited to a specific breakpoint defined in
 
     border-radius: 100px;
 
-    $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+    $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
     @if (not index($_doclet-store, $_doclet)) {
       $_doclet-store: append($_doclet-store, $_doclet) !global;
       // stylelint-disable
@@ -712,7 +937,7 @@ title: Button (rounded)
 order: #{$_jigsass-button-i + 150}
 ---
 
-**.o-btn--#{$jigsass-obj-current-modifier}**
+**.o-btn--#{$jigsass-obj-modifier}**
 
 A rounded button, extends `.o-btn` in the markup.
 
@@ -744,12 +969,12 @@ optionally limited to a specific breakpoint defined in
   // ----- Style Modifiers ----- //
   @each $modifier, $ruleset in $jigsass-btn-modifiers {
     @include jigsass-classname($modifier: $modifier) {
-      $modifier: $jigsass-obj-current-modifier;
+      $modifier: $jigsass-obj-modifier;
       $ruleset: map-get($jigsass-btn-modifiers, $modifier);
 
       @include jigsass-map2styles($ruleset);
 
-      $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+      $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
       @if (not index($_doclet-store, $_doclet)) {
         $_doclet-store: append($_doclet-store, $_doclet) !global;
         // stylelint-disable
@@ -759,7 +984,7 @@ title: Button (#{$modifier})
 order: #{$_jigsass-button-i + 200}
 ---
 
-**.o-btn--#{$jigsass-obj-current-modifier}**
+**.o-btn--#{$jigsass-obj-modifier}**
 
 A `#{$modifier}` modifier, extends `.o-btn` in the markup.
 
@@ -777,12 +1002,6 @@ Style is defined in the `#{$modifier}` key of the `$jigsass-btn-modifiers` varia
 ```scss
 @include jigsass-button($modifier: #{$modifier}[, $from, $until, $misc]);
 ```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
         // stylelint-enable
         $_jigsass-button-i: $_jigsass-button-i + 1 !global;
@@ -793,14 +1012,14 @@ optionally limited to a specific breakpoint defined in
 
 // ----- State ----- //
 
-@include jigsass-define-object(o-btn-is-disabled) {
+@include jigsass-object(o-btn-is-disabled, $jigsass-btn-disabled-conf) {
   @include jigsass-classname {
     @if (length($jigsass-btn-disabled) > 0) {
       @include jigsass-map2styles($jigsass-btn-disabled);
     }
   }
 
-  $_doclet: $jigsass-obj-current-name + ($jigsass-obj-current-modifier or '');
+  $_doclet: $jigsass-obj-name + ($jigsass-obj-modifier or '');
   @if (not index($_doclet-store, $_doclet)) {
     $_doclet-store: append($_doclet-store, $_doclet) !global;
     // stylelint-disable
