@@ -771,17 +771,6 @@ type-size, color and background-color utils, and by configurable button object m
   <input type='button' class='o-btn'value='An `input` element' />
 </div>
 ```
-
-#### include with:
-```scss
-@include jigsass-button([$from, $until, $misc]);
-```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
       // stylelint-enable
       $_jigsass-button-i: $_jigsass-button-i + 1 !global;
@@ -854,17 +843,6 @@ Changes the padding of the button, text size should be modified using type-size 
   <input type='button' value='An `input` element' class='o-btn o-btn--#{$modifier}' />
 </div>
 ```
-
-#### include with:
-```scss
-@include jigsass-button($modifier: #{$modifier}[, $from, $until, $misc]);
-```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
           // stylelint-enable
           $_jigsass-button-i: $_jigsass-button-i + 1 !global;
@@ -904,17 +882,6 @@ An outlined button, extends `.o-btn` in the markup.
   <input type='button' value='An `input` element' class='o-btn o-btn--outline  demo-deeppink' />
 </div>
 ```
-
-#### include with:
-```scss
-@include jigsass-button($modifier: outline[, $from, $until, $misc]);
-```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
       // stylelint-enable
       $_jigsass-button-i: $_jigsass-button-i + 1 !global;
@@ -948,17 +915,6 @@ A rounded button, extends `.o-btn` in the markup.
   <input type='button' value='An `input` element' class='o-btn o-btn--round  demo-bgc' />
 </div>
 ```
-
-#### include with:
-```scss
-@include jigsass-button($modifier: round[, $from, $until, $misc]);
-```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
       // stylelint-enable
       $_jigsass-button-i: $_jigsass-button-i + 1 !global;
@@ -996,11 +952,6 @@ Style is defined in the `#{$modifier}` key of the `$jigsass-btn-modifiers` varia
   <a href="#"  class='o-btn o-btn--#{$modifier}'>An `a` element</a>
   <input type='button' value='An `input` element' class='o-btn o-btn--#{$modifier}' />
 </div>
-```
-
-#### include with:
-```scss
-@include jigsass-button($modifier: #{$modifier}[, $from, $until, $misc]);
 ```
 */
         // stylelint-enable
@@ -1042,17 +993,6 @@ Style is defined in the `$jigsass-btn-disabled` variable.
   <input type='button' value='An `input` element' class='o-btn o-btn-is-disabled  demo-teal' />
 </div>
 ```
-
-#### include with:
-```scss
-@include jigsass-button($modifier: is-disabled[, $from, $until, $misc]);
-```
-
-
-#### Related Mixins:
-[jigsass-button](#button-mixin): Generates a button or a buttons modifier class,
-optionally limited to a specific breakpoint defined in
-[$jigsass-breakpoints](https://txhawks.github.io/jigsass-tools-mq/#variable-jigsass-breakpoints)).
 */
     // stylelint-enable
     $_jigsass-button-i: $_jigsass-button-i + 1 !global;
