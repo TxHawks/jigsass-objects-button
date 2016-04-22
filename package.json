@@ -4,7 +4,7 @@
     "name": "TxHawks",
     "email": "tofu.hawks@gmail.com"
   },
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "scss/index.scss",
   "style": "scss/index.scss",
   "files": [
