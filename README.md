@@ -135,7 +135,7 @@ $jigsass-btn-conf: (
 
 #### Disabled buttons
 ```scss
-$jigsass-btn-disabled-config
+$jigsass-btn-disabled-conf
 ```
 
 
@@ -150,7 +150,7 @@ disabled button classes.
 
 **Example:**
 ```scss
-$jigsass-btn-conf: (
+$jigsass-btn-disabled-conf: (
   no-breakpoint: (
     no-modifier: true,  // Enables generation of the `.o-btn-is-disabled`
                         // class outside of any media query.
